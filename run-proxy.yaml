@@ -1,0 +1,16 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: grpc-bus-websocket-proxy
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        run: grpc-bus-websocket-proxy
+    spec:
+      containers:
+      - name: grpc-bus-websocket-proxy
+        image: gabrielgrant/grpc-bus-websocket-proxy
+        ports:
+        - containerPort: 80

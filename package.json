@@ -1,0 +1,30 @@
+{
+  "author": "Gabriel Grant <g@briel.ca>",
+  "name": "grpc-bus-websocket-server",
+  "description": "A grpc-bus server using websockets for client communication",
+  "version": "0.1.0",
+  "license": "AGPL-3.0",
+  "main": "index.js",
+  "keywords": [
+    "Proxy",
+    "RPC",
+    "GRPC",
+    "WebSocket",
+    "WebSockets",
+    "real-time"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/gabrielgrant/grpc-bus-websocket-server.git"
+  },
+  "bin": "server.js",
+  "scripts": {},
+  "dependencies": {
+    "grpc": "^1.0.1",
+    "grpc-bus": "1.0.0",
+    "protobufjs": "^5.0.1",
+    "rsvp": "^3.3.3",
+    "ws": "^1.1.1"
+  },
+  "devDependencies": {}
+}
