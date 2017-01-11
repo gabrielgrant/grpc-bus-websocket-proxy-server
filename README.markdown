@@ -10,7 +10,9 @@ node server.js
 
 How it Works
 
-The browser client loads the Protobuf definition, and passes it to the server via the initial message after creating the WebSocket connection
+The browser client loads the Protobuf definition (either as a `.proto`
+file or compiled as a `.proto.json`), and passes it to the server via
+the initial message after creating the WebSocket connection.
 
 
 TODO

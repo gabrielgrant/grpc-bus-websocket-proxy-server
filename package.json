@@ -2,7 +2,7 @@
   "author": "Gabriel Grant <g@briel.ca>",
   "name": "grpc-bus-websocket-server",
   "description": "A grpc-bus server using websockets for client communication",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "license": "AGPL-3.0",
   "main": "index.js",
   "keywords": [
