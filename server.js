@@ -14,7 +14,14 @@ wss.on('connection', function connection(ws) {
 
   ws.once('message', function incoming(data, flags) {
     var message = JSON.parse(data);
-    protoDefs = protobuf.loadProto(message.contents, null, message.filename);
+    console.log('connected with');
+    console.dir(message, { depth: null });
+    var protoFileExt = message.filename.substr(message.filename.lastIndexOf('.') + 1);
+    if (protoFileExt === "json") {
+      protoDefs = protobuf.loadJson(message.contents, null, message.filename);
+    } else {
+      protoDefs = protobuf.loadProto(message.contents, null, message.filename);
+    }
     var gbServer = new grpcBus.Server(protoDefs, function(message) {
       console.log('sending (pre-stringify): %s')
       console.dir(message, { depth: null });
