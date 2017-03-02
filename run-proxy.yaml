@@ -11,6 +11,21 @@ spec:
     spec:
       containers:
       - name: grpc-bus-websocket-proxy
-        image: gabrielgrant/grpc-bus-websocket-proxy
+        image: gabrielgrant/grpc-bus-websocket-proxy:0.1.0
         ports:
-        - containerPort: 80
+        - name: http
+          containerPort: 8081
+          protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grpc-bus-websocket-proxy-svc
+spec:
+  ports:
+  - name: grpc-port
+    port: 8081
+    nodePort: 32082
+  selector:
+    run: grpc-bus-websocket-proxy
+  type: NodePort
