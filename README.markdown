@@ -40,4 +40,10 @@ TODO
 - Specify allowed connections as CLI arg: --allow [service_name:]server:port
 - Specify port as CLI arg:  --port 8080
 
+Publishing a new version:
+
+```
+docker build -t gabrielgrant/grpc-bus-websocket-proxy:{{VERSION}} .
+docker push gabrielgrant/grpc-bus-websocket-proxy
+```
 
