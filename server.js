@@ -29,12 +29,19 @@ wss.on('connection', function connection(ws) {
       console.dir(JSON.stringify(message));
       //ws.send(JSON.stringify(message));
       var pbMessage = new gbTree.GBServerMessage(message);
-      ws.send(pbMessage.toBuffer());
+      console.log('sending (pbMessage message):', pbMessage);
+      console.log('sending (raw message):', pbMessage.toBuffer());
+      console.log('re-decoded message:', gbTree.GBServerMessage.decode(pbMessage.toBuffer()));
+      if (ws.readyState === ws.OPEN) {
+        ws.send(pbMessage.toBuffer());
+      } else {
+        console.log('WebSocket closed before message could be sent:', pbMessage);
+      }
     }, require('grpc'));
 
     ws.on('message', function incoming(data, flags) {
       console.log('received (raw):');
-      console.dir(message);
+      console.log(data);
       console.log('with flags:')
       console.dir(flags);
       //var message = JSON.parse(data);
