@@ -14,6 +14,19 @@ The browser client loads the Protobuf definition (either as a `.proto`
 file or compiled as a `.proto.json`), and passes it to the server via
 the initial message after creating the WebSocket connection.
 
+Deployment
+
+There is a [Docker image built](https://hub.docker.com/r/gabrielgrant/grpc-bus-websocket-proxy/) that can be deployed on a Kubernetes cluster using the included manifest:
+
+```
+kubectl create -f kubernetes-manifest.yaml
+```
+
+If redeploying, delete the earlier deployment first:
+
+```
+kubectl delete -f kubernetes-manifest.yaml && kubectl create -f kubernetes-manifest.yaml
+```
 
 TODO
 
