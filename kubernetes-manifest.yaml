@@ -11,7 +11,7 @@ spec:
     spec:
       containers:
       - name: grpc-bus-websocket-proxy
-        image: gabrielgrant/grpc-bus-websocket-proxy:0.1.0
+        image: gabrielgrant/grpc-bus-websocket-proxy:0.1.1-debug3
         ports:
         - name: http
           containerPort: 8081
