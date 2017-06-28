@@ -59,6 +59,24 @@ function streamOutHello(call) {
   call.end();
 }
 
+function concat(call, callback) {
+  var msgs = [];
+  call.on('data', function(msg) {
+    msgs.push(msg.content);
+    console.log('concat got data', msg, msg.content);
+  });
+  call.on('end', function() {
+    callback(null, {content: msgs.join('\n')});
+  });
+}
+
+function echo(call) {
+  call.on('data', function(msg) {
+    console.log('echo got data', msg, msg.content);
+    call.write(msg);
+  });
+}
+
 /**
  * Starts an RPC server that receives requests for the Greeter service at the
  * sample server port
@@ -66,7 +84,7 @@ function streamOutHello(call) {
 
 function main() {
   var server = new grpc.Server();
-  server.addProtoService(hello_proto.Greeter.service, {sayHello: sayHello, streamOutHello: streamOutHello});
+  server.addProtoService(hello_proto.Greeter.service, {sayHello: sayHello, streamOutHello: streamOutHello, echo: echo, concat: concat});
   server.bind('0.0.0.0:50051', grpc.ServerCredentials.createInsecure());
   server.start();
 }
