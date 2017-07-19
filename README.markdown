@@ -16,7 +16,13 @@ the initial message after creating the WebSocket connection.
 
 Deployment
 
-There is a [Docker image built](https://hub.docker.com/r/gabrielgrant/grpc-bus-websocket-proxy/) that can be deployed on a Kubernetes cluster using the included manifest:
+There is a [Docker image built](https://hub.docker.com/r/gabrielgrant/grpc-bus-websocket-proxy/) that can be run with:
+
+```
+docker run gabrielgrant/grpc-bus-websocket-proxy
+```
+
+It can also be deployed on a Kubernetes cluster using the included manifest:
 
 ```
 kubectl create -f kubernetes-manifest.yaml
