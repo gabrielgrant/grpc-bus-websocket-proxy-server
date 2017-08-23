@@ -40,7 +40,7 @@ wss.on('connection', function connection(ws) {
       //var message = JSON.parse(data);
       var message = gbTree.GBClientMessage.decode(data);
       console.log('received (parsed):');
-      console.dir(message, { depth: null });
+      console.dir(message, { depth: 3 });
       gbServer.handleMessage(message);
     });
   });
