@@ -40,6 +40,11 @@ wss.on('connection', function connection(ws) {
       //var message = JSON.parse(data);
       var message = gbTree.GBClientMessage.decode(data);
       console.log('received (parsed):');
+      // We specify a constant depth here because the incoming
+      // message may contain the Metadata object, which has
+      // circular references and crashes console.dir if its
+      // allowed to recurse to print. Depth of 3 was chosen
+      // because it supplied enough detail when printing
       console.dir(message, { depth: 3 });
       gbServer.handleMessage(message);
     });
