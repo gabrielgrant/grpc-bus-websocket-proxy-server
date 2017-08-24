@@ -46,9 +46,16 @@ message GBReleaseService {
   int32 service_id = 1;
 }
 
+message GBMetadataValues {
+  repeated string values = 1;
+}
+
 message GBCallInfo {
   string method_id = 1;
   bytes bin_argument = 2;
+  // Meta is a map from string to []string
+  // e.g: https://godoc.org/google.golang.org/grpc/metadata#MD
+  map<string, GBMetadataValues> metadata = 3;
 }
 
 // Create a call
