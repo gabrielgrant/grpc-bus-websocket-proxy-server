@@ -40,6 +40,7 @@ service Greeter {
   // Sends a greeting
   rpc SayHello (HelloRequest) returns (HelloReply) {}
   rpc StreamOutHello (HelloStreamRequest) returns (stream HelloReply) {}
+  rpc StreamInHello(stream HelloStreamInRequest) returns (HelloStreamInResponse) {}
   rpc Echo (stream EchoMessage) returns (stream EchoMessage) {}
   rpc Concat (stream EchoMessage) returns (EchoMessage) {}
 }
@@ -57,6 +58,15 @@ message HelloReply {
 message HelloStreamRequest {
   string name = 1;
   int32 iterations = 2;
+}
+
+message HelloStreamInRequest {
+  string name = 1;
+  int32 iterations = 2;
+}
+
+message HelloStreamInResponse {
+  string name = 1;
 }
 
 message EchoMessage {

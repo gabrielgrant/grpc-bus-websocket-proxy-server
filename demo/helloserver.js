@@ -59,6 +59,19 @@ function streamOutHello(call) {
   call.end();
 }
 
+function streamInHello(call, callback) {
+  var cumulative_names = [];
+  // Start a timer
+  call.on('data', function(name) {
+    cumulative_names.push(name.name)
+  });
+  call.on('end', function() {
+    callback(null, {
+      name: cumulative_names.join(" ")
+    });
+  });
+}
+
 function concat(call, callback) {
   var msgs = [];
   call.on('data', function(msg) {
@@ -84,7 +97,14 @@ function echo(call) {
 
 function main() {
   var server = new grpc.Server();
-  server.addProtoService(hello_proto.Greeter.service, {sayHello: sayHello, streamOutHello: streamOutHello, echo: echo, concat: concat});
+  server.addProtoService(hello_proto.Greeter.service, 
+      {
+        sayHello: sayHello,
+        streamOutHello: streamOutHello,
+        streamInHello: streamInHello,
+        echo: echo,
+        concat: concat
+      });
   server.bind('0.0.0.0:50051', grpc.ServerCredentials.createInsecure());
   server.start();
 }
