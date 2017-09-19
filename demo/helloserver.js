@@ -61,8 +61,9 @@ function streamOutHello(call) {
 
 function streamInHello(call, callback) {
   var cumulative_names = [];
-  // Start a timer
+  console.log("streamInHello call metadata:", call.metadata.get('foodsILike'));
   call.on('data', function(name) {
+    console.log("streamInHello on data metadata:", this.metadata.get('foodsILike'));
     cumulative_names.push(name.name)
   });
   call.on('end', function() {
