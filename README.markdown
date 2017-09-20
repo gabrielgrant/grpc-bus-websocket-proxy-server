@@ -49,7 +49,12 @@ TODO
 Publishing a new version:
 
 ```
-docker build -t gabrielgrant/grpc-bus-websocket-proxy:{{VERSION}} .
-docker push gabrielgrant/grpc-bus-websocket-proxy
+npm version patch
+VERSION=$(cat package.json| jq --raw-output .version)
+docker build -t gabrielgrant/grpc-bus-websocket-proxy:latest -t gabrielgrant/grpc-bus-websocket-proxy:$VERSION  -t pachyderm/grpc-proxy:$VERSION -t pachyderm/grpc-proxy:latest .
+docker push gabrielgrant/grpc-bus-websocket-proxy:$VERSION
+docker push gabrielgrant/grpc-bus-websocket-proxy:latest
+docker push pachyderm/grpc-proxy:$VERSION
+docker push pachyderm/grpc-proxy:latest
 ```
 
