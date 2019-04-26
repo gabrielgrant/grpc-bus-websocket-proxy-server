@@ -7,6 +7,7 @@ var grpcBus = require('grpc-bus');
 var protobuf = require("protobufjs");
 
 if (!process.argv.includes('--verbose')) {
+  var alwaysLog = console.log;
   console.log = () => {};
   console.dir = () => {};
 }
@@ -14,8 +15,8 @@ if (!process.argv.includes('--verbose')) {
 gbBuilder = protobuf.loadProtoFile('grpc-bus.proto');
 gbTree = gbBuilder.build().grpcbus;
 
-wss.on('connection', function connection(ws) {
-  console.log('connected');
+wss.on('connection', function connection(ws, request) {
+  alwaysLog(`New connection established from ${request.connection.remoteAddress}`);
 
   ws.once('message', function incoming(data, flags) {
     var message = JSON.parse(data);
@@ -40,7 +41,7 @@ wss.on('connection', function connection(ws) {
       if (ws.readyState === ws.OPEN) {
         ws.send(pbMessage.toBuffer());
       } else {
-        console.log('WebSocket closed before message could be sent:', pbMessage);
+        console.error('WebSocket closed before message could be sent:', pbMessage);
       }
     }, require('grpc'));
 
@@ -60,5 +61,10 @@ wss.on('connection', function connection(ws) {
       console.dir(message, { depth: 3 });
       gbServer.handleMessage(message);
     });
+
+    ws.on('error', error => console.error(`WebSocket Error: ${error.message}`));
   });
+});
+
+wss.on('error', error => console.error(`WebSocket Server Error: ${error.message}`));
 });
