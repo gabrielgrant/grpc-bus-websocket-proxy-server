@@ -2,6 +2,8 @@ GRPC-Bus WebSocket Proxy Server
 
 This Node.js server acts as a proxy, connecting GRPC clients running in a browser context to standard GRPC service(s) via a WebSocket.
 
+You'll want to use the [GRPC Bus WebSocket Proxy Client](http://github.com/gabrielgrant/grpc-bus-websocket-proxy-client) to connect from the browser.
+
 Usage
 
 ```
