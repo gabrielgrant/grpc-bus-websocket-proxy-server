@@ -6,6 +6,11 @@ var wss = new WebSocketServer({ port: 8081 });
 var grpcBus = require('grpc-bus');
 var protobuf = require("protobufjs");
 
+if (!process.argv.includes('--verbose')) {
+  console.log = () => {};
+  console.dir = () => {};
+}
+
 gbBuilder = protobuf.loadProtoFile('grpc-bus.proto');
 gbTree = gbBuilder.build().grpcbus;
 
