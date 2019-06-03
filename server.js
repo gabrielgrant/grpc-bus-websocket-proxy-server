@@ -67,4 +67,3 @@ wss.on('connection', function connection(ws, request) {
 });
 
 wss.on('error', error => console.error(`WebSocket Server Error: ${error.message}`));
-});
