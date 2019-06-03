@@ -6,8 +6,9 @@ var wss = new WebSocketServer({ port: 8081 });
 var grpcBus = require('grpc-bus');
 var protobuf = require("protobufjs");
 
+var alwaysLog = console.log;
+
 if (!process.argv.includes('--verbose')) {
-  var alwaysLog = console.log;
   console.log = () => {};
   console.dir = () => {};
 }
