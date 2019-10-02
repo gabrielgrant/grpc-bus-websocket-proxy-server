@@ -26,6 +26,14 @@ if (process.env.ALLOWED_ENDPOINTS) {
   alwaysLog('no ALLOWED_ENDPOINTS defined, so connections to all hosts will be allowed')
 }
 
+if (process.env.DEFAULT_ENDPOINT) {
+  var defaultEndpoint = process.env.DEFAULT_ENDPOINT;
+  defaultEndpoint = defaultEndpoint.trim();
+  alwaysLog('default service endpoint: ', defaultEndpoint);
+} else {
+  alwaysLog('no DEFAULT_ENDPOINT is defined, so all client connection requests must specify their endpoint explicitly')
+}
+
 gbBuilder = protobuf.loadProtoFile('grpc-bus.proto');
 gbTree = gbBuilder.build().grpcbus;
 
@@ -79,6 +87,10 @@ wss.on('connection', function connection(ws, request) {
         let serviceId = message.service_create.service_info.service_id;
         let endpoint = message.service_create.service_info.endpoint;
         console.log(`client requested creation of a new service (${serviceId}) on ${endpoint}`)
+        if (typeof defaultEndpoint !== 'undefined' && !endpoint) {
+          console.log(`no endpoint specified, using default: ${defaultEndpoint}`)
+          message.service_create.service_info.endpoint = defaultEndpoint;
+        }
         if (typeof allowedEndpoints === 'undefined') {
           console.log('no allowedEndpoints defined, so connection will be allowed');
         } else {
