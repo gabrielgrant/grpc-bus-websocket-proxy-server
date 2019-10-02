@@ -6,11 +6,24 @@ var wss = new WebSocketServer({ port: 8081 });
 var grpcBus = require('grpc-bus');
 var protobuf = require("protobufjs");
 
+console.log('Starting...')
 var alwaysLog = console.log;
 
 if (!process.argv.includes('--verbose')) {
+  console.log('running in quiet mode: most log output will be supressed')
   console.log = () => {};
   console.dir = () => {};
+} else {
+  console.log('running in verbose mode');
+}
+
+
+if (process.env.ALLOWED_ENDPOINTS) {
+  var allowedEndpoints = process.env.ALLOWED_ENDPOINTS.split(',');
+  allowedEndpoints = allowedEndpoints.map(s => s.trim());
+  alwaysLog('allowed service endpoints: ', allowedEndpoints);
+} else {
+  alwaysLog('no ALLOWED_ENDPOINTS defined, so connections to all hosts will be allowed')
 }
 
 gbBuilder = protobuf.loadProtoFile('grpc-bus.proto');
@@ -29,6 +42,8 @@ wss.on('connection', function connection(ws, request) {
     } else {
       protoDefs = protobuf.loadProto(message.contents, null, message.filename);
     }
+    console.log('protoDefs');
+    console.log(protoDefs);
     var gbServer = new grpcBus.Server(protoDefs, function(message) {
       console.log('sending (pre-stringify): %s')
       console.dir(message, { depth: null });
@@ -60,6 +75,23 @@ wss.on('connection', function connection(ws, request) {
       // allowed to recurse to print. Depth of 3 was chosen
       // because it supplied enough detail when printing
       console.dir(message, { depth: 3 });
+      if (message.service_create) {
+        let serviceId = message.service_create.service_info.service_id;
+        let endpoint = message.service_create.service_info.endpoint;
+        console.log(`client requested creation of a new service (${serviceId}) on ${endpoint}`)
+        if (typeof allowedEndpoints === 'undefined') {
+          console.log('no allowedEndpoints defined, so connection will be allowed');
+        } else {
+          console.log(`checking against allowedEndpoints whitelist (${allowedEndpoints})`);
+          if (allowedEndpoints.includes(endpoint)) {
+            console.log(`Requested endpoint in allowedEndpoints, so connection will be allowed`);
+          } else {
+            let msg = `Error: Attempted to connect to ${endpoint}, but that is not an allowed server (${allowedEndpoints})`;
+            throw new Error(msg);
+            ws.send(msg);
+          }
+        }
+      }
       gbServer.handleMessage(message);
     });
 
