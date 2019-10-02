@@ -18,20 +18,26 @@ if (!process.argv.includes('--verbose')) {
 }
 
 
-if (process.env.ALLOWED_ENDPOINTS) {
-  var allowedEndpoints = process.env.ALLOWED_ENDPOINTS.split(',');
-  allowedEndpoints = allowedEndpoints.map(s => s.trim());
-  alwaysLog('allowed service endpoints: ', allowedEndpoints);
+if (process.env.OVERRIDE_ENDPOINT) {
+  var overrideEndpoint = process.env.OVERRIDE_ENDPOINT;
+  overrideEndpoint = overrideEndpoint.trim();
+  alwaysLog('all service endpoints will be overriden with: ', overrideEndpoint);
 } else {
-  alwaysLog('no ALLOWED_ENDPOINTS defined, so connections to all hosts will be allowed')
-}
+  if (process.env.ALLOWED_ENDPOINTS) {
+    var allowedEndpoints = process.env.ALLOWED_ENDPOINTS.split(',');
+    allowedEndpoints = allowedEndpoints.map(s => s.trim());
+    alwaysLog('allowed service endpoints: ', allowedEndpoints);
+  } else {
+    alwaysLog('no ALLOWED_ENDPOINTS defined, so connections to all hosts will be allowed')
+  }
 
-if (process.env.DEFAULT_ENDPOINT) {
-  var defaultEndpoint = process.env.DEFAULT_ENDPOINT;
-  defaultEndpoint = defaultEndpoint.trim();
-  alwaysLog('default service endpoint: ', defaultEndpoint);
-} else {
-  alwaysLog('no DEFAULT_ENDPOINT is defined, so all client connection requests must specify their endpoint explicitly')
+  if (process.env.DEFAULT_ENDPOINT) {
+    var defaultEndpoint = process.env.DEFAULT_ENDPOINT;
+    defaultEndpoint = defaultEndpoint.trim();
+    alwaysLog('default service endpoint: ', defaultEndpoint);
+  } else {
+    alwaysLog('no DEFAULT_ENDPOINT is defined, so all client connection requests must specify their endpoint explicitly')
+  }
 }
 
 gbBuilder = protobuf.loadProtoFile('grpc-bus.proto');
@@ -87,20 +93,25 @@ wss.on('connection', function connection(ws, request) {
         let serviceId = message.service_create.service_info.service_id;
         let endpoint = message.service_create.service_info.endpoint;
         console.log(`client requested creation of a new service (${serviceId}) on ${endpoint}`)
-        if (typeof defaultEndpoint !== 'undefined' && !endpoint) {
-          console.log(`no endpoint specified, using default: ${defaultEndpoint}`)
-          message.service_create.service_info.endpoint = defaultEndpoint;
-        }
-        if (typeof allowedEndpoints === 'undefined') {
-          console.log('no allowedEndpoints defined, so connection will be allowed');
+        if (overrideEndpoint) {
+          console.log(`overriding endpoing with ${overrideEndpoint}`)
+          endpoint = overrideEndpoint;
         } else {
-          console.log(`checking against allowedEndpoints whitelist (${allowedEndpoints})`);
-          if (allowedEndpoints.includes(endpoint)) {
-            console.log(`Requested endpoint in allowedEndpoints, so connection will be allowed`);
+          if (typeof defaultEndpoint !== 'undefined' && !endpoint) {
+            console.log(`no endpoint specified, using default: ${defaultEndpoint}`)
+            message.service_create.service_info.endpoint = defaultEndpoint;
+          }
+          if (typeof allowedEndpoints === 'undefined') {
+            console.log('no allowedEndpoints defined, so connection will be allowed');
           } else {
-            let msg = `Error: Attempted to connect to ${endpoint}, but that is not an allowed server (${allowedEndpoints})`;
-            throw new Error(msg);
-            ws.send(msg);
+            console.log(`checking against allowedEndpoints whitelist (${allowedEndpoints})`);
+            if (allowedEndpoints.includes(endpoint)) {
+              console.log(`Requested endpoint in allowedEndpoints, so connection will be allowed`);
+            } else {
+              let msg = `Error: Attempted to connect to ${endpoint}, but that is not an allowed server (${allowedEndpoints})`;
+              throw new Error(msg);
+              ws.send(msg);
+            }
           }
         }
       }
