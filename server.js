@@ -95,7 +95,10 @@ wss.on('connection', function connection(ws, request) {
         console.log(`client requested creation of a new service (${serviceId}) on ${endpoint}`)
         if (overrideEndpoint) {
           console.log(`overriding endpoing with ${overrideEndpoint}`)
-          endpoint = overrideEndpoint;
+          if (endpoint !== overrideEndpoint) {
+            alwaysLog(`overriding endpoint ${endpoint} with ${overrideEndpoint}`);
+          }
+          message.service_create.service_info.endpoint = overrideEndpoint;
         } else {
           if (typeof defaultEndpoint !== 'undefined' && !endpoint) {
             console.log(`no endpoint specified, using default: ${defaultEndpoint}`)
