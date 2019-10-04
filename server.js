@@ -109,7 +109,7 @@ wss.on('connection', function connection(ws, request) {
               console.log(`Requested endpoint in allowedEndpoints, so connection will be allowed`);
             } else {
               let msg = `Error: Attempted to connect to ${endpoint}, but that is not an allowed server (${allowedEndpoints})`;
-              throw new Error(msg);
+              console.log(msg);
               ws.send(msg);
             }
           }
