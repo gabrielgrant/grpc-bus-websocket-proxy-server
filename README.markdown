@@ -51,7 +51,10 @@ TODO
 Publishing a new version:
 
 ```
+git checkout master
+git pull
 npm version patch
+git push
 VERSION=$(cat package.json| jq --raw-output .version)
 docker build -t gabrielgrant/grpc-bus-websocket-proxy:latest -t gabrielgrant/grpc-bus-websocket-proxy:$VERSION .
 docker push gabrielgrant/grpc-bus-websocket-proxy:$VERSION
